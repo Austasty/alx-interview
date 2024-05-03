@@ -1,3 +1,3 @@
-# alx-interview
+# solution alx-interview
 
 alx-interview tasks
