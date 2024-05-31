@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""N Queens placement on NxN chessboard"""
+"""N Queens placement on NxN """
 
 
 import sys
@@ -47,7 +47,7 @@ def init():
 def n_queens():
 
     n = init()
-    # generate all solutions
+    # generate solutions
     solutions = generate_solutions(n, n)
     # print solutions
     for array in solutions:
