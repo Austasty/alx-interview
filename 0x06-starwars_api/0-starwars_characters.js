@@ -2,44 +2,48 @@
 
 const request = require('request');
 
-if (process.argv.length < 3) {
-    console.log('Please provide a Movie ID as a positional argument.');
-    process.exit(1);
+const movieId = process.argv[2];
+if (!movieId) {
+  console.log('Please provide a Movie ID as a positional argument.');
+  process.exit(1);
 }
 
-const movieId = process.argv[2];
-const apiUrl = `https://swapi.dev/api/films/${movieId}/`;
+const movieEndpoint = 'https://swapi-api.alx-tools.com/api/films/' + movieId;
 
-request(apiUrl, { json: true }, (error, response, body) => {
+function sendRequest(characterList, index) {
+  if (characterList.length === index) {
+    return;
+  }
+
+  request(characterList[index], (error, response, body) => {
     if (error) {
-        console.error('Error fetching the movie data:', error);
-        return;
+      console.error('Error fetching character data:', error);
+    } else if (response.statusCode !== 200) {
+      console.error('Failed to fetch character data. Status code:', response.statusCode);
+    } else {
+      try {
+        const character = JSON.parse(body);
+        console.log(character.name);
+      } catch (parseError) {
+        console.error('Error parsing character data:', parseError);
+      }
     }
+    sendRequest(characterList, index + 1);
+  });
+}
 
-    if (response.statusCode !== 200) {
-        console.error(`Failed to fetch movie data. Status code: ${response.statusCode}`);
-        return;
+request(movieEndpoint, (error, response, body) => {
+  if (error) {
+    console.error('Error fetching movie data:', error);
+  } else if (response.statusCode !== 200) {
+    console.error('Failed to fetch movie data. Status code:', response.statusCode);
+  } else {
+    try {
+      const movie = JSON.parse(body);
+      const characterList = movie.characters;
+      sendRequest(characterList, 0);
+    } catch (parseError) {
+      console.error('Error parsing movie data:', parseError);
     }
-
-    if (!body.characters) {
-        console.error('No characters found for this movie.');
-        return;
-    }
-
-    const characters = body.characters;
-    characters.forEach((characterUrl) => {
-        request(characterUrl, { json: true }, (error, response, body) => {
-            if (error) {
-                console.error('Error fetching character data:', error);
-                return;
-            }
-
-            if (response.statusCode !== 200) {
-                console.error(`Failed to fetch character data. Status code: ${response.statusCode}`);
-                return;
-            }
-
-            console.log(body.name);
-        });
-    });
+  }
 });
