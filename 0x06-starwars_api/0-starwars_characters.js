@@ -5,7 +5,7 @@ const request = require('request');
 const movieId = process.argv[2];
 const movieEndpoint = 'https://swapi-api.alx-tools.com/api/films/' + movieId;
 
-function sendofRequest (characterList, index) {
+function sendRequest (characterList, index) {
   if (characterList.length === index) {
     return;
   }
@@ -15,7 +15,7 @@ function sendofRequest (characterList, index) {
       console.log(error);
     } else {
       console.log(JSON.parse(body).name);
-      sendofRequest(characterList, index + 1);
+      sendRequest(characterList, index + 1);
     }
   });
 }
@@ -26,6 +26,6 @@ request(movieEndpoint, (error, response, body) => {
   } else {
     const characterList = JSON.parse(body).characters;
 
-    sendofRequest(characterList, 0);
+    sendRequest(characterList, 0);
   }
 });
